@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://www.github.com/jef/nvidia-snatcher/compare/v1.5.0...v1.6.0) (2020-09-24)
+
+
+### Features
+
+* **notification:** add pushover priority setting ([#186](https://www.github.com/jef/nvidia-snatcher/issues/186)) ([f277172](https://www.github.com/jef/nvidia-snatcher/commit/f2771721914a20619833df8ccb2ac44298687b4d))
+
 ## [1.5.0](https://www.github.com/jef/nvidia-snatcher/compare/v1.4.0...v1.5.0) (2020-09-24)
 
 
