@@ -2,13 +2,21 @@ import {Config} from './config';
 import {Logger} from './logger';
 import {Stores} from './store/model';
 import {adBlocker} from './adblocker';
+import {fetchLinks} from './store/fetch-links';
 import {getSleepTime} from './util';
 import puppeteer from 'puppeteer-extra';
+import resourceBlock from 'puppeteer-extra-plugin-block-resources';
 import stealthPlugin from 'puppeteer-extra-plugin-stealth';
 import {tryLookupAndLoop} from './store';
 
 puppeteer.use(stealthPlugin());
-puppeteer.use(adBlocker);
+if (Config.browser.lowBandwidth) {
+	puppeteer.use(resourceBlock({
+		blockedTypes: new Set(['image', 'font'])
+	}));
+} else {
+	puppeteer.use(adBlocker);
+}
 
 /**
  * Starts the bot.
@@ -37,14 +45,21 @@ async function main() {
 		headless: Config.browser.isHeadless
 	});
 
+	const promises = [];
 	for (const store of Stores) {
 		Logger.debug(store.links);
 		if (store.setupAction !== undefined) {
 			store.setupAction(browser);
 		}
 
+		if (store.linksBuilder) {
+			promises.push(fetchLinks(store, browser));
+		}
+
 		setTimeout(tryLookupAndLoop, getSleepTime(), browser, store);
 	}
+
+	await Promise.all(promises);
 }
 
 /**

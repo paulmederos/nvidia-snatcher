@@ -49,12 +49,15 @@ function envOrNumber(environment: string | undefined, number?: number): number {
 const browser = {
 	isHeadless: envOrBoolean(process.env.HEADLESS),
 	isTrusted: envOrBoolean(process.env.BROWSER_TRUSTED, false),
+	lowBandwidth: envOrBoolean(process.env.LOW_BANDWIDTH, false),
+	maxBackoff: envOrNumber(process.env.PAGE_BACKOFF_MAX, 3600000),
 	maxSleep: envOrNumber(process.env.PAGE_SLEEP_MAX, 10000),
+	minBackoff: envOrNumber(process.env.PAGE_BACKOFF_MIN, 10000),
 	minSleep: envOrNumber(process.env.PAGE_SLEEP_MIN, 5000),
 	open: envOrBoolean(process.env.OPEN_BROWSER)
 };
 
-const logLevel = process.env.LOG_LEVEL ?? 'info';
+const logLevel = envOrString(process.env.LOG_LEVEL, 'info');
 
 const notifications = {
 	desktop: process.env.DESKTOP_NOTIFICATIONS === 'true',
@@ -64,6 +67,7 @@ const notifications = {
 	},
 	email: {
 		password: envOrString(process.env.EMAIL_PASSWORD),
+		to: envOrString(process.env.EMAIL_TO, envOrString(process.env.EMAIL_USERNAME)),
 		username: envOrString(process.env.EMAIL_USERNAME)
 	},
 	phone: {
@@ -100,6 +104,12 @@ const notifications = {
 		accessToken: envOrString(process.env.TELEGRAM_ACCESS_TOKEN),
 		chatId: envOrString(process.env.TELEGRAM_CHAT_ID)
 	},
+	twilio: {
+		accountSid: envOrString(process.env.TWILIO_ACCOUNT_SID),
+		authToken: envOrString(process.env.TWILIO_AUTH_TOKEN),
+		from: envOrString(process.env.TWILIO_FROM_NUMBER),
+		to: envOrString(process.env.TWILIO_TO_NUMBER)
+	},
 	twitter: {
 		accessTokenKey: envOrString(process.env.TWITTER_ACCESS_TOKEN_KEY),
 		accessTokenSecret: envOrString(process.env.TWITTER_ACCESS_TOKEN_SECRET),
@@ -107,6 +117,11 @@ const notifications = {
 		consumerSecret: envOrString(process.env.TWITTER_CONSUMER_SECRET),
 		tweetTags: envOrString(process.env.TWITTER_TWEET_TAGS)
 	}
+};
+
+const nvidia = {
+	addToCardAttempts: envOrNumber(process.env.NVIDIA_ADD_TO_CART_ATTEMPTS, 10),
+	sessionTtl: envOrNumber(process.env.NVIDIA_SESSION_TTL, 60000)
 };
 
 const page = {
@@ -131,6 +146,7 @@ export const Config = {
 	browser,
 	logLevel,
 	notifications,
+	nvidia,
 	page,
 	store
 };
